@@ -1,0 +1,251 @@
+;This program do smooth for a multiyear_layer_stack file and calculate metrics, output both smoothed data and metrics data in two seperate files
+;inputs: file name of a multiyear_layer_stack file,
+;outputs:smoothed data named multiyear_layer_stack_smoothed and metrics file named multiyear_layer_stack_smoothed_metrics
+;process huge data by tile process, spectral tile
+
+pro smooth_calculate_metrics_tile, filen
+
+;input: filen---multiple-year file, ready to smooth, output file name is filen+'_metrics'
+
+;---- initial envi,
+;test input parameters
+
+;filen = '/home/jiang/nps/cesu/modis_ndvi_250m/wrkdir/2010_multiyear_layer_stack'
+
+file='C:\nps\2010_multiyear_layer_stack'
+
+if !version.OS_FAMILY EQ 'Windows' then begin
+
+sign='\'
+
+endif else begin
+sign='/'
+
+endelse
+
+
+
+p =strpos(filen,sign,/reverse_search)
+
+len=strlen(filen)
+
+wrkdir=strmid(filen,0,p+1)
+
+filebasen=strmid(filen,p+1,len-p)
+
+year=strmid(filebasen,0,4)
+
+;---- output file name of smoothed data
+
+fileout_smooth=wrkdir+filebasen+'_smooth'
+
+openw,unit_smooth,fileout_smooth,/get_lun
+
+
+fileout_metrics=wrkdir+filebasen+'_metrics'
+
+openw,unit_metrics,fileout_metrics,/get_lun
+
+
+start_batch, wrkdir+'b_log',b_unit
+
+
+flg=0;  0----successs, 1--- not sucess
+
+
+
+
+envi_open_file,filen,r_fid=rt_fid
+
+
+if rt_fid EQ 0 then begin
+
+flg=1  ; 0---success, 1--- not success
+
+return  ;
+
+endif
+
+;envi_select,fid=rt_fid,pos=pos,dims=dims
+
+;envi_file_query,rt_fid,dims=dims,nb=nb,ns=ns,nl=nl,fname=fn,bnames=bnames
+
+envi_file_query, rt_fid,data_type=data_type, xstart=xstart,ystart=ystart,$
+                 interleave=interleave,dims=dims,ns=ns,nl=nl,nb=nb,bnames=bnames
+
+pos=lindgen(nb)
+
+  tile_id = envi_init_tile(rt_fid, pos, num_tiles=num_tiles, $
+    interleave=(interleave > 1), xs=dims(1), xe=dims(2), $
+    ys=dims(3), ye=dims(4) )
+
+;---- define two output data buff, data_smoothed and data_metrics
+
+;data_metrics=fltarr(ns,nl,12) ; 12 metrics stored in 13 bands for each pixel
+
+bnames_metrics = ['onp','onv','endp','endv','durp','maxp','maxv','ranv','rtup','rtdn','tindvi','mflg']
+
+;data=intarr(ns,nb) ; BIL format (num of samples, num of bands)
+
+threshold=-2000 ; for point with value below threshold, get rid of them
+
+;for i=0L, num_tiles-1 do begin
+;    data = envi_get_tile(tile_id, i)
+;    print, i
+;    help, data
+;  endfor
+;  envi_tile_done, tile_id
+
+
+;----j=ns, i=nl, k=nb
+
+for i=0l, num_tiles-1 do begin  ; every line
+
+;data=envi_get_slice(/BIL,fid=rt_fid,line=i)
+
+data = envi_get_tile(tile_id, i)
+
+
+sz=size(data)
+
+;----- process each spectral in the tile i
+
+for j=0l, sz(1)-1 do begin
+
+;---- one spectrum process
+
+print, ' process tile: '+strtrim(string(i),2), ', sample: '+strtrim(string(j),2)
+
+
+if j EQ 723 then begin
+
+print,'pause'
+
+endif
+
+
+tmp=transpose(data(j,*) ) ; band vector
+
+
+time_series_process, tmp,bnames,threshold,mid_interp,mid_smooth,mid_bname,vmetrics
+
+;---- get rid of no-sense points,
+
+;interpol_nonextension_vector,tmp,bnames,threshold,tmp_interp,tmp_bname_interp
+
+;user_smooth, tmp_interp, tmp_smooth
+
+;----- wls_smooth is the method that Daniel L. Swets developed, not in cludes combined windows
+
+;wls_smooth, tmp_interp,2,2,tmp_smooth
+
+
+;-----only store mid-year data
+
+;mid_idx = where( strmid(tmp_bname_interp,0,1) EQ 1,cnt)
+;mid_interp=tmp_interp(mid_idx)
+;mid_smooth= tmp_smooth(mid_idx)
+;mid_bname= tmp_bname_interp(mid_idx)
+
+;----- define data_smoothed to store smoothed data
+
+if j EQ 0l then begin  ; the very first sample loop, only execuated once
+
+nb_smooth =n_elements(mid_smooth)
+
+bnames_smooth=mid_bname
+
+data_smooth=intarr(sz(1),nb_smooth)
+
+data_metrics=fltarr(sz(1),12)
+
+endif
+
+data_smooth(j,*) = mid_smooth
+
+
+;--- calculate metrics of pixel(j,i) -----------------
+
+;user_metrics, mid_smooth, mid_interp, mid_bname, vmetrics ; vout--smoothed vector, vorg--orginal vector, vmetrics--metrics
+
+num_out=n_elements(vmetrics)
+
+data_metrics(j,0:num_out-1)=vmetrics
+
+
+endfor  ; sample loop
+
+;----write data_smooth of one tile
+
+writeu,unit_smooth,data_smooth
+
+writeu,unit_metrics,data_metrics
+
+
+endfor  ; line loop
+
+;-----close files
+
+free_lun, unit_smooth
+free_lun, unit_metrics
+
+
+;-----output head info file for smooth data
+
+map_info=envi_get_map_info(fid=rt_fid)
+
+;---- output smooth data
+;fileout_smoothed = wrkdir+filebasen+'_smoothed'
+;ENVI_WRITE_ENVI_FILE,data_smooth,out_name= fileout_smoothed,map_info=map_info,bnames= bnames_smooth,$
+;                     ns=ns,nl=nl,nb=nb_smooth
+
+data_type=2  ; integer type for smooth
+
+envi_setup_head, fname=fileout_smooth, ns=ns, nl=nl, nb=nb_smooth,bnames=bnames_smooth, $
+    data_type=data_type, offset=0, interleave=(interleave > 1),$
+    xstart=xstart+dims[1], ystart=ystart+dims[3],map_info=map_info, $
+    descrip='one year smoothed data', /write
+
+
+
+
+
+
+
+;-----output head info for metrics data
+
+;sz =size(data_metrics)
+;metrics_ns=sz(1)
+;metrics_nl=sz(2)
+;metrics_nb=sz(3)
+
+;fileout_metrics=wrkdir+filebasen+'_metrics'
+
+;ENVI_WRITE_ENVI_FILE,data_metrics,out_name= fileout_metrics,map_info=map_info,bnames=data_metrics_bnames,$
+;                     ns=metrics_ns,nl=metrics_nl,nb=metrics_nb
+
+
+data_type=4 ; float for metrics
+
+envi_setup_head, fname=fileout_metrics, ns=ns, nl=nl, nb=nb_smooth,bnames=bnames_metrics, $
+    data_type=data_type, offset=0, interleave=(interleave > 1),$
+    xstart=xstart+dims[1], ystart=ystart+dims[3],map_info=map_info, $
+    descrip='one year metrics data', /write
+
+
+envi_tile_done, tile_id
+
+
+
+;---- exit batch mode
+
+ENVI_BATCH_EXIT
+
+
+print,'finishing smooth and calculation of metrics ...'
+
+
+return
+
+end
+

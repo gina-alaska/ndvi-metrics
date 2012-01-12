@@ -1,0 +1,47 @@
+;This program cut off points with value below threshold, then interpol the vector
+pro cutoff_interp, vcomp,threshold,ratio
+;vcomp----vector need processed, return vector is also by this vector
+;threshold----if value of element in vcomp are less than threshold, this element needs interpolate
+;ratio----number of elements in vector with values of more than threshold/total number of elements
+
+
+;threshold = 0 ; even use threshold = 0, nornal use -2000.
+
+num_vcomp=n_elements(vcomp)
+
+idxv = where(vcomp GT threshold, cnt, complement=idx)
+
+tmpnan=vcomp ; tmpnan will be used to store return vector
+
+
+if cnt GE 1 and float(cnt)/float(num_vcomp) GE ratio then begin ; valid number is more than ratio, this pixel is good   
+
+;get mean of first and last valid as fill value for 1-28, 223-365 days
+
+tmpx=fix(idxv) ;x coordinates values of valid values
+
+tmpv=vcomp(idxv)   ; valid values
+
+len=n_elements(vcomp)
+
+tmpu=indgen(len) ; interpolated x coorinidates
+
+;tmpnan=interpol(tmpv,tmpx,tmpu) ;interpolate
+
+tmpnan=interpol_line(tmpv,tmpx,tmpu) ; interpolate by jzhu's method
+
+
+endif else begin
+
+tmpnan(*)=threshold
+
+endelse
+
+
+;---- output vector
+
+vcomp=tmpnan
+
+return
+
+end
