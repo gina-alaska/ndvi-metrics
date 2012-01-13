@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.ui.views.task">
+	</section>
+	<section name="NewIdlProjectWizard">
+		<section name="NewIdlProjectWizardPage">
+			<item value="true" key="add_to_path"/>
+		</section>
+	</section>
+</section>
