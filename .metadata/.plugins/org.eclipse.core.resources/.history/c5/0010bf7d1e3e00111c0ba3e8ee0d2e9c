@@ -6,7 +6,7 @@
 ;wrk_dir='/raid/scratch/cesu/eMODIS/ver_new_201110'
 ;year='2008'
 
-pro one_year_flist, data_dir, wrkdir,year
+one_year_flist, data_dir, wrkdir,year
 
 if !version.os_family EQ 'Windows' then begin
 cmd ='dir /s/B '
