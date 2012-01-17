@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<workbench progressCount="13" version="2.0">
+<workbench progressCount="11" version="2.0">
 <workbenchAdvisor/>
-<window height="1366" width="942" x="133" y="0">
+<window height="1404" width="1757" x="524" y="231">
 <fastViewData fastViewLocation="1024"/>
 <perspectiveBar>
 <itemSize x="160"/>
@@ -20,7 +20,7 @@
 <coolItem id="group.help" itemType="typeGroupMarker"/>
 <coolItem id="org.eclipse.ui.workbench.help" itemType="typeToolBarContribution" x="-1" y="-1"/>
 </coolbarLayout>
-<page focus="true" label="Workspace - Debug">
+<page focus="true" label="Workspace - IDL">
 <editors>
 <editorArea activeWorkbook="DefaultEditorWorkbook">
 <info part="DefaultEditorWorkbook">
@@ -29,21 +29,31 @@
 <part id="0"/>
 <part id="1"/>
 <part id="2"/>
+<part id="3"/>
+<part id="4"/>
 </presentation>
 </folder>
 </info>
 </editorArea>
-<editor id="com.rsi.idldt.proeditor.ProEditor" name="smooth_calculate_metrics_tile_ver9.pro" partName="smooth_calculate_metrics_tile_ver9.pro" path="/home/jiang/nps/cesu/modis_ndvi_250m/ndvi-metrics/moving-average/smooth_calculate_metrics_tile_ver9.pro" title="smooth_calculate_metrics_tile_ver9.pro" tooltip="moving-average/smooth_calculate_metrics_tile_ver9.pro" workbook="DefaultEditorWorkbook">
-<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/moving-average/smooth_calculate_metrics_tile_ver9.pro"/>
-<editorState selectionHPixel="0" selectionLength="105" selectionOffset="4819"/>
+<editor id="com.rsi.idldt.proeditor.ProEditor" name="smooth_calculate_metrics_tile_ver9.pro" partName="smooth_calculate_metrics_tile_ver9.pro" path="/home/jiang/nps/cesu/modis_ndvi_250m/ndvi-metrics/moving-average-threshold/smooth_calculate_metrics_tile_ver9.pro" title="smooth_calculate_metrics_tile_ver9.pro" tooltip="moving-average-threshold/smooth_calculate_metrics_tile_ver9.pro" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/moving-average-threshold/smooth_calculate_metrics_tile_ver9.pro"/>
+<editorState selectionHPixel="0" selectionLength="0" selectionOffset="393"/>
 </editor>
-<editor focus="true" id="com.rsi.idldt.proeditor.ProEditor" name="geteos_nothreshold_ver15.pro" partName="geteos_nothreshold_ver15.pro" path="/home/jiang/nps/cesu/modis_ndvi_250m/ndvi-metrics/moving-average/geteos_nothreshold_ver15.pro" title="geteos_nothreshold_ver15.pro" tooltip="moving-average/geteos_nothreshold_ver15.pro" workbook="DefaultEditorWorkbook">
-<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/moving-average/geteos_nothreshold_ver15.pro"/>
-<editorState selectionHPixel="0" selectionLength="85" selectionOffset="3322"/>
+<editor id="com.rsi.idldt.proeditor.ProEditor" name="metricsoncube.pro" partName="metricsoncube.pro" path="/home/jiang/nps/cesu/modis_ndvi_250m/ndvi-metrics/moving-average-threshold/metricsoncube.pro" title="metricsoncube.pro" tooltip="moving-average-threshold/metricsoncube.pro" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/moving-average-threshold/metricsoncube.pro"/>
+<editorState selectionHPixel="0" selectionLength="2" selectionOffset="1707"/>
 </editor>
-<editor id="com.rsi.idldt.proeditor.ProEditor" name="getsos_nothreshold_ver15.pro" partName="getsos_nothreshold_ver15.pro" path="/home/jiang/nps/cesu/modis_ndvi_250m/ndvi-metrics/moving-average/getsos_nothreshold_ver15.pro" title="getsos_nothreshold_ver15.pro" tooltip="moving-average/getsos_nothreshold_ver15.pro" workbook="DefaultEditorWorkbook">
-<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/moving-average/getsos_nothreshold_ver15.pro"/>
-<editorState selectionHPixel="0" selectionLength="88" selectionOffset="2763"/>
+<editor id="com.rsi.idldt.proeditor.ProEditor" name="fmetricsoncube.pro" partName="fmetricsoncube.pro" path="/home/jiang/nps/cesu/modis_ndvi_250m/ndvi-metrics/moving-average-threshold/fmetricsoncube.pro" title="fmetricsoncube.pro" tooltip="moving-average-threshold/fmetricsoncube.pro" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/moving-average-threshold/fmetricsoncube.pro"/>
+<editorState selectionHPixel="0" selectionLength="2" selectionOffset="3954"/>
+</editor>
+<editor id="com.rsi.idldt.proeditor.ProEditor" name="getmaxndvi.pro" partName="getmaxndvi.pro" path="/home/jiang/nps/cesu/modis_ndvi_250m/ndvi-metrics/moving-average-threshold/getmaxndvi.pro" title="getmaxndvi.pro" tooltip="moving-average-threshold/getmaxndvi.pro" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/moving-average-threshold/getmaxndvi.pro"/>
+<editorState selectionHPixel="0" selectionLength="2" selectionOffset="1255"/>
+</editor>
+<editor focus="true" id="com.rsi.idldt.proeditor.ProEditor" name="getndvitodate.pro" partName="getndvitodate.pro" path="/home/jiang/nps/cesu/modis_ndvi_250m/ndvi-metrics/moving-average-threshold/getndvitodate.pro" title="getndvitodate.pro" tooltip="moving-average-threshold/getndvitodate.pro" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/moving-average-threshold/getndvitodate.pro"/>
+<editorState selectionHPixel="0" selectionLength="2" selectionOffset="3452"/>
 </editor>
 </editors>
 <views>
@@ -51,10 +61,19 @@
 <viewState CommonNavigator.LINKING_ENABLED="0" org.eclipse.ui.navigator.resources.workingSets.showTopLevelWorkingSets="0"/>
 </view>
 <view id="com.rsi.idldt.ui.views.CommandHistoryView" partName="Command History">
-<viewState columnWidth0="200" grp200="0" grp206="1" showTreeView="1" sortColumn="1" sortDirection="128"/>
+<viewState columnWidth0="200" grp203="1" grp206="1" showTreeView="1" sortColumn="1" sortDirection="128"/>
 </view>
 <view id="com.rsi.idldt.ui.views.ProfilerView" partName="Profiler">
 <viewState/>
+</view>
+<view id="org.eclipse.ui.views.ProblemView" partName="Problems">
+<viewState columnWidth0="466" columnWidth1="78" columnWidth2="409" columnWidth3="260" columnWidth4="0" horizontalPosition="0" verticalPosition="0">
+<columnOrder columnOrderIndex="0"/>
+<columnOrder columnOrderIndex="1"/>
+<columnOrder columnOrderIndex="2"/>
+<columnOrder columnOrderIndex="3"/>
+<columnOrder columnOrderIndex="4"/>
+</viewState>
 </view>
 <view id="org.eclipse.debug.ui.DebugView" partName="Debug">
 <viewState/>
@@ -88,7 +107,7 @@
 <viewState/>
 </view>
 </views>
-<perspectives activePart="org.eclipse.debug.ui.BreakpointView" activePerspective="org.eclipse.debug.ui.DebugPerspective">
+<perspectives activePart="org.eclipse.ui.views.ProblemView" activePerspective="com.rsi.idldt.ui.IDLPerspective">
 <perspective editorAreaTrimState="2" editorAreaVisible="1" fixed="0" version="0.016">
 <descriptor class="org.eclipse.debug.internal.ui.DebugPerspectiveFactory" id="org.eclipse.debug.ui.DebugPerspective" label="Debug"/>
 <alwaysOnActionSet id="org.eclipse.ui.actionSet.keyBindings"/>
@@ -231,6 +250,7 @@
 <view id="org.eclipse.ui.console.ConsoleView"/>
 <view id="org.eclipse.ui.views.TaskList"/>
 <view id="org.eclipse.debug.ui.VariableView"/>
+<view id="org.eclipse.ui.views.ProblemView"/>
 <view id="org.eclipse.ui.navigator.ProjectExplorer"/>
 <view id="org.eclipse.ui.views.ContentOutline"/>
 <view id="com.rsi.idldt.ui.views.CommandLineView"/>
@@ -259,16 +279,18 @@
 <presentation id="org.eclipse.ui.internal.presentations.r33.WorkbenchPresentationFactory_33"/>
 </folder>
 </info>
-<info folder="true" part="bottom" ratio="0.598862" ratioLeft="421" ratioRight="282" relationship="4" relative="left">
-<folder activePageID="org.eclipse.ui.console.ConsoleView" appearance="2" expanded="2">
+<info folder="true" part="bottom" ratio="0.4404104" ratioLeft="558" ratioRight="709" relationship="4" relative="left">
+<folder activePageID="org.eclipse.ui.views.ProblemView" appearance="2" expanded="2">
 <page content="org.eclipse.ui.console.ConsoleView" label="Console"/>
 <page content="org.eclipse.ui.views.TaskList" label="Tasks"/>
 <page content="org.eclipse.debug.ui.VariableView" label="Variables"/>
+<page content="org.eclipse.ui.views.ProblemView" label="Problems"/>
 <page content="*" label="LabelNotFound"/>
 <presentation id="org.eclipse.ui.internal.presentations.r33.WorkbenchPresentationFactory_33">
 <part id="0"/>
 <part id="1"/>
 <part id="2"/>
+<part id="3"/>
 </presentation>
 </folder>
 </info>
@@ -301,31 +323,14 @@
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" path="/moving-average/geteos_nothreshold_ver15.pro"/>
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" path="/moving-average/time_series_process_nps_oneyear_ver9.pro"/>
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" path="/moving-average/user_metrics_nps_by1yr.pro"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" path="/moving-average/smooth_calculate_metrics_tile_ver9.pro"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" path="/moving-average/getsos_nothreshold_ver15.pro"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" path="/moving-average-threshold/smooth_calculate_metrics_tile_ver9.pro"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" path="/moving-average-threshold/metricsoncube.pro"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" path="/moving-average-threshold/fmetricsoncube.pro"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" path="/moving-average-threshold/getmaxndvi.pro"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" path="/moving-average-threshold/getndvitodate.pro"/>
 </editors>
-<item historyLabel="geteos_nothreshold_ver15.pro" index="2">
-<position/>
-</item>
-<item historyLabel="geteos_nothreshold_ver15.pro" index="2">
-<position/>
-</item>
-<item historyLabel="geteos_nothreshold_ver15.pro" index="2">
-<position/>
-</item>
-<item historyLabel="geteos_nothreshold_ver15.pro" index="2">
-<position/>
-</item>
-<item historyLabel="geteos_nothreshold_ver15.pro" index="2">
-<position/>
-</item>
-<item historyLabel="geteos_nothreshold_ver15.pro" index="2">
-<position/>
-</item>
-<item historyLabel="geteos_nothreshold_ver15.pro" index="2">
-<position/>
-</item>
-<item historyLabel="geteos_nothreshold_ver15.pro" index="2">
-<position/>
-</item>
 <item historyLabel="geteos_nothreshold_ver15.pro" index="2">
 <position/>
 </item>
@@ -449,8 +454,32 @@
 <item historyLabel="getsos_nothreshold_ver15.pro" index="1">
 <position info="not_deleted" x="2763" y="88"/>
 </item>
-<item active="true" historyLabel="geteos_nothreshold_ver15.pro" index="2">
+<item historyLabel="geteos_nothreshold_ver15.pro" index="2">
 <position info="not_deleted" x="3322" y="0"/>
+</item>
+<item historyLabel="smooth_calculate_metrics_tile_ver9.pro" index="5">
+<position/>
+</item>
+<item historyLabel="geteos_nothreshold_ver15.pro" index="2">
+<position/>
+</item>
+<item historyLabel="getsos_nothreshold_ver15.pro" index="6">
+<position info="not_deleted" x="2763" y="88"/>
+</item>
+<item historyLabel="smooth_calculate_metrics_tile_ver9.pro" index="7">
+<position/>
+</item>
+<item historyLabel="metricsoncube.pro" index="8">
+<position info="not_deleted" x="1707" y="2"/>
+</item>
+<item historyLabel="fmetricsoncube.pro" index="9">
+<position info="not_deleted" x="3954" y="2"/>
+</item>
+<item historyLabel="getmaxndvi.pro" index="10">
+<position info="not_deleted" x="1255" y="2"/>
+</item>
+<item active="true" historyLabel="getndvitodate.pro" index="11">
+<position info="not_deleted" x="3452" y="2"/>
 </item>
 </navigationHistory>
 <input factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/" type="8"/>
@@ -469,6 +498,21 @@
 </trimLayout>
 </window>
 <mruList>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" name="getndvitodate.pro" tooltip="moving-average-threshold/getndvitodate.pro">
+<persistable path="/moving-average-threshold/getndvitodate.pro"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" name="getmaxndvi.pro" tooltip="moving-average-threshold/getmaxndvi.pro">
+<persistable path="/moving-average-threshold/getmaxndvi.pro"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" name="fmetricsoncube.pro" tooltip="moving-average-threshold/fmetricsoncube.pro">
+<persistable path="/moving-average-threshold/fmetricsoncube.pro"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" name="metricsoncube.pro" tooltip="moving-average-threshold/metricsoncube.pro">
+<persistable path="/moving-average-threshold/metricsoncube.pro"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" name="smooth_calculate_metrics_tile_ver9.pro" tooltip="moving-average-threshold/smooth_calculate_metrics_tile_ver9.pro">
+<persistable path="/moving-average-threshold/smooth_calculate_metrics_tile_ver9.pro"/>
+</file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" name="getsos_nothreshold_ver15.pro" tooltip="moving-average/getsos_nothreshold_ver15.pro">
 <persistable path="/moving-average/getsos_nothreshold_ver15.pro"/>
 </file>
@@ -498,21 +542,6 @@
 </file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" name="interpol_noextension_1y_vector_ver9.pro" tooltip="moving-average/interpol_noextension_1y_vector_ver9.pro">
 <persistable path="/moving-average/interpol_noextension_1y_vector_ver9.pro"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" name="interpol_noextension_1y_vector_ver9.pro" tooltip="moving-average-threshold/interpol_noextension_1y_vector_ver9.pro">
-<persistable path="/moving-average-threshold/interpol_noextension_1y_vector_ver9.pro"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" name="cutoff_interp_ver10.pro" tooltip="moving-average-threshold/cutoff_interp_ver10.pro">
-<persistable path="/moving-average-threshold/cutoff_interp_ver10.pro"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" name="oneyear_data_layer_subset_good_ver9.pro" tooltip="moving-average-threshold/oneyear_data_layer_subset_good_ver9.pro">
-<persistable path="/moving-average-threshold/oneyear_data_layer_subset_good_ver9.pro"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" name="one_year_flist.pro" tooltip="moving-average-threshold/one_year_flist.pro">
-<persistable path="/moving-average-threshold/one_year_flist.pro"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" name="time_series_process_nps_oneyear_ver9.pro" tooltip="moving-average-threshold/time_series_process_nps_oneyear_ver9.pro">
-<persistable path="/moving-average-threshold/time_series_process_nps_oneyear_ver9.pro"/>
 </file>
 </mruList>
 </workbench>

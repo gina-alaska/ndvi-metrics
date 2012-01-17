@@ -1,38 +1,20 @@
 ;Jinag Zhu, jiang@gina.alaska.edu, 2/22/2011
 ;This program interpolates and smoothes a multiyear_layer_stack file and calculate metrics of mid-year data.
-;The input is:
-;a multiyear_layer_stack file;
+;The input is:a oneyear_stack file
 ;the output is:
 ;a mid-year smoothed data file named multiyear_layer_stack_smoothed,
 ;a metrics file named multiyear_layer_stack_smoothed_metrics.
-;This program breaks the huge data into tiles and goes through tile loop to proces each tile.
+;flg indicating if this program run successfully.
 
-;jzhu, 9/8/2011, ver9 get the file which include both ndvi and bq in one-year-stacking file
+;This program breaks the huge data into tiles and goes through tile loop to proces each tile. For each tile, go through
+;each pixel to calulate the metrics and smoothed time series of the pixel. 
+;jzhu, 1/17/2012,this program combines moving average and threshold methodm it calls geoget_ver16.pro and sosget_ver16.pro. 
 
 pro smooth_calculate_metrics_tile_ver9,filen,flg
 
-;test, @@@@
-
-;filen='/raid/scratch/cesu/eMODIS/ver_new_201110/2008/ver13/full_scene/2008_oneyear_layer_subset_good'
-
-;filen='/mnt/jzhu_scratch/nps-cesu/wrk/ver_new_201110/2008/ver13/full_scene/2008_oneyear_layer_subset_good'
-
-;filen='/mnt/jzhu_scratch/nps-cesu/wrk/ver_old/2008/ver13/sub_scene/2008_oneyear_layer_subset_good'
-;input: filen---a multiple-year file,
-;outputs: a smoothed file (filen+'_smooth')
-;a metrics file (filen+'_metrics'),
 ;flg (indicate if the program run successful, 0--successful, 1--not successful)
-
 ;---- initial envi,
-
 ;test only, input parameters
-;filen = '/home/jiang/nps/cesu/modis_ndvi_250m/wrkdir/2010_multiyear_layer_stack_0_200_set_snow_cloud_n4000'
-
-;filen='C:\nps\2010_multiyear_layer_stack_0_200_set_snow_cloud_n4000'
-
-;filen='C:\Users\jiang\Documents\work\nps-prog\ndvi_products\nps_metrics\2008_oneyear_layer_subset_good'
-
-;filen='/mnt/jzhu_scratch/nps-cesu/wrk/ver_new_201110/2008/ver13/full_scene/2008_oneyear_layer_subset_good'
 
 filen='/mnt/raid/scratch/cesu/eMODIS/ver_new_201110/2008/ver13/full_scene/2008_oneyear_layer_subset_good'
 

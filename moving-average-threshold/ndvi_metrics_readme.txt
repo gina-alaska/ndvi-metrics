@@ -9,7 +9,7 @@ A. Algorithm process steps
   ndvi files comes from EMODIS website. download them and store 
   them in ~/nps/cesu/modis_ndvi_250m/TERRA. They are zip files.
 
-  The scripts to unzip them and rename them are: 
+  The scripts to unzip them is: 
 
   unzip_ndvi_v2.bash
 
