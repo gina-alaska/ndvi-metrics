@@ -1,4 +1,4 @@
-FUNCTION  GetSOS_ver15, Cross, NDVI, bq, x, bpy, FMA
+FUNCTION  GetSOS_ver16, Cross, NDVI, bq, x, bpy, FMA
 ;
 ; These numbers are the window (*bpy) from the
 ; current SOS in which to look for the next SOS
@@ -53,6 +53,43 @@ lastidx=n_elements(NDVI)-1 ; lastidx
 ; First SOS must be within first WinFirst*bpy and must less then min(mxidxst,0.5*bpy)
 ;
      
+;----find the first 20%point as x20
+idx20=where(cross.t EQ 1,cnt1)
+
+if cnt1 LE 0 then begin  ; <2> if no 20% point, set sosx as possiblx
+
+x20=0
+y20=0
+sosx=0
+sosy=0
+goto,lb11
+
+endif else begin  ; <2> compare possibx with 20% point,<2>
+
+;--when there are more than one 20% points, choose one which is the most close to the maximun slop point
+;slopex=( cross.x(where(cross.t EQ 2) ) )(0)
+;gapmin = min(  abs(cross.x(idx20)-slopex)  )
+;x20=cross.x(  (where( abs(cross.x - slopex) EQ  gapmin ) )(0)  )
+;y20=cross.y(  (where( abs(cross.x - slopex) EQ  gapmin ) )(0)  )
+
+;---when there are more than one 20% points, choose one which is the closest to possibx
+;if possibx GT 0 then begin
+;gapmin=min(abs(cross.x(idx20)-possibx))
+;x20=cross.x( (where(abs(cross.x-possibx) EQ gapmin))(0) )
+;y20=cross.y( (where(abs(cross.x-possibx) EQ gapmin))(0) )
+;endif else begin
+;slopex=( cross.x(where(cross.t EQ 2) ) )(0)
+;gapmin = min(  abs(cross.x(idx20)-slopex)  )
+;x20=cross.x(  (where( abs(cross.x - slopex) EQ  gapmin ) )(0)  )
+;y20=cross.y(  (where( abs(cross.x - slopex) EQ  gapmin ) )(0)  )
+;endelse
+
+;--when more than one 20% points, choose the first one
+x20=cross.x( idx20(0) )
+y20=cross.y( idx20(0) )
+
+;---------  find possibx in cross_only, 
+
      t0idx = where(cross.t EQ 0,t0cnt) ; t0--crossover type
   
      if t0cnt LT 1 then begin ; <0> no  crossover points, possiblex=0
@@ -60,10 +97,6 @@ lastidx=n_elements(NDVI)-1 ; lastidx
      possiby=0
      
      endif else begin ; <0> looking for possiblex
-     
-     
-     
-     
      
        cross_only={X:cross.x(t0idx), Y:cross.y(t0idx), S:cross.s(t0idx),T:cross.t(t0idx),C:cross.c(t0idx), N:t0cnt}
        
@@ -112,7 +145,6 @@ lastidx=n_elements(NDVI)-1 ; lastidx
 ; e. get slopes of each firstidx by using next 4 points linfit       
     ;         numtype0=n_elements(firstidx)
     ;         slopes=fltarr(numtype0)
-             
     ;         for kk=0,numtype0-1 do begin
     ;          xx=fix([cross_only.x[firstidx(kk)]+3, cross_only.x[firstidx(kk)]+2, cross_only.x[firstidx(kk)]+1,cross_only.x[firstidx(kk)] ])
     ;          yy=ndvi(xx)
@@ -121,8 +153,11 @@ lastidx=n_elements(NDVI)-1 ; lastidx
     ;         endfor 
     ;         firstsosidx = where(slopes EQ max(slopes) )
 ; f. use slope in cross_only to pick the greatest slope
-           FirstSOSIdx= where(cross_only.s(firstidx) EQ max( cross_only.s(firstidx) ) )              
+;           FirstSOSIdx= where(cross_only.s(firstidx) EQ max( cross_only.s(firstidx) ) )              
                
+; g. use the crossover point which is the most close to the 20% point as possibx
+
+           FirstSOSIdx =where( abs(cross_only.x(firstidx)-x20) EQ min( abs(cross_only.x(firstidx)-x20 ) ) )
              
                 
 ;---- check FirstSOSidx(0), if it is snow(4b), compare it with 20% point,
@@ -138,51 +173,10 @@ lastidx=n_elements(NDVI)-1 ; lastidx
 endelse  ;<0>
           
 
-;---- possibx=0 do not find sos
-
-if possibx EQ 0 then begin
-sosx=0
-sosy=0
-goto,lb11
-endif
-
- ;---- if there are more than one 20% points, choose one which is the most close to the maximun slop point
-
-idx20=where(cross.t EQ 1,cnt1)
-
-if cnt1 LE 0 then begin  ; <2> if no 20% point, set sosx as possiblx
-
-sosx=possibx
-sosy=possiby
-
-endif else begin  ; <2> compare possibx with 20% point,<2>
-
-;--when there are more than one 20% points, choose one which is the most close to the maximun slop point
-;slopex=( cross.x(where(cross.t EQ 2) ) )(0)
-;gapmin = min(  abs(cross.x(idx20)-slopex)  )
-;x20=cross.x(  (where( abs(cross.x - slopex) EQ  gapmin ) )(0)  )
-;y20=cross.y(  (where( abs(cross.x - slopex) EQ  gapmin ) )(0)  )
-;---when there are more than one 20% points, choose one which is the closest to possibx
-if possibx GT 0 then begin
-gapmin=min(abs(cross.x(idx20)-possibx))
-x20=cross.x( (where(abs(cross.x-possibx) EQ gapmin))(0) )
-y20=cross.y( (where(abs(cross.x-possibx) EQ gapmin))(0) )
-endif else begin
-slopex=( cross.x(where(cross.t EQ 2) ) )(0)
-gapmin = min(  abs(cross.x(idx20)-slopex)  )
-x20=cross.x(  (where( abs(cross.x - slopex) EQ  gapmin ) )(0)  )
-y20=cross.y(  (where( abs(cross.x - slopex) EQ  gapmin ) )(0)  )
-endelse
-
-;--when more than one 20% points, choose the first one
-;x20=cross.x(idx20)
-;y20=cross.y(idx20)
 
 
-             
-      ;---- between 20% and possiblex
-      ;
-      ;---- check [possibx:x20]
+;---- compare x20 and possiblex
+
        if possibx GT 0 then begin 
         if possibx LT x20 then begin  ;  make sure possiblx equal or greater than x20
         

@@ -4,8 +4,8 @@
 ;threshold is fill value, do not do interpolate, snowcld=60, need interpolate, for points with 81-100, need interpolate
  
 
-pro interpol_noextension_1y_vector_ver10, mid_year_cb, mid_year_bn,threshold,snowcld,v_interp,v_bq_interp, v_bname_interp,ratio, mid_stnum,mid_ednum,flg_metrics
-             
+pro interpol_noextension_1y_vector_ver9,  mid_year_cb, mid_year_bn,threshold,snowcld,v_interp,v_bq_interp, v_bname_interp,ratio, mid_stnum,mid_ednum,flg_metrics
+
 ;input: mid_year--- input vector, return data stored in v_interp, threshold--- get rid of those points with value below threshold, then interpol
 ;       mid_year_bn----band names of elements of vector
 ;output: v_interp---- result vector, v_bname_interp --- result of band names
@@ -22,66 +22,60 @@ pro interpol_noextension_1y_vector_ver10, mid_year_cb, mid_year_bn,threshold,sno
 ;----determine if we calculate ndvi metrics
 
 flg_metrics= 0 ; initial not calculate metrics 
-
 numofmidyrcb=n_elements(mid_year_cb)
-
 numofmidyr=numofmidyrcb/2
 
 ;--- the first half of numofmidyr ndvi vector, the second half of nunofmidyr is bq vector
 
 mid_year=mid_year_cb(0:numofmidyrcb/2 -1)
-
 mid_year_bq=mid_year_cb(numofmidyrcb/2:numofmidyrcb-1)
 
 ;----- for fill pixels, do not calculate ndvi, just extend the band name to one year ---
 
-idx10=where(mid_year_bq EQ 10b or mid_year_bq EQ 2b,cnt10) ; fill or bad points
+idxv=where((mid_year_bq EQ 0b) or (mid_year_bq EQ 4b),cntv )
 
-if cnt10 EQ numofmidyr then begin   ; fill pixels
-
-flg_metrics=-1
-oneyear_extensionfillval, mid_year, mid_year_bq, mid_year_bn, mid_stnum,mid_ednum,days_mid
-v_interp=mid_year
-v_bq_interp=mid_year_bq
-v_bname_interp=mid_year_bn
-
-return
-
-endif
-
-
-idxv=where(mid_year_bq EQ 0b or mid_year_bq EQ 4b,cntv)
-
-if cntv GT 0 then begin
-
-idxpos=where(mid_year(idxv) GT 100b, cntpos)
-
-if cntpos GT 5 then begin
+if cntv GT 5 then begin 
+   idxv1=where(mid_year(idxv) GT 100 and max(mid_year(idxv))-100 GE 25, cntv1) ;maximum must be greater than 0.25
+endif else begin
+   cntv1=0
+endelse
+   
+if cntv1 GT 5 then begin ; valid point are at least 5, otherwise, do not calculate metrics
 
 flg_metrics=1
 
-endif
-
-endif
-
-
-
-;---interpolate un-extended vector
-
-cutoff_interp_ver9,mid_year_cb,mid_year_g
+cutoff_interp_ver10,mid_year_cb,mid_year_g,flg_metrics  ; cutoff_interp_ver10, first change fill value as 100, then cut off negative,
 
 ;----- call oneyear_extension
-oneyear_extension100b, mid_year_g, mid_year_bq, mid_year_bn,mid_stnum,mid_ednum,days_mid
-
-daycom=days_mid
+;oneyear_extension100b, mid_year_g, mid_year_bq, mid_year_bn,mid_stnum,mid_ednum,days_mid
+;daycom=days_mid
 
 ;----- output interpolated data
-
 v_interp=mid_year_g  ; processed vector to v
 v_bq_interp=mid_year_bq ; processed bq vector
 v_bname_interp=mid_year_bn ;processed band name cevtor
 
 return
 
+
+endif else begin
+
+flg_metrics=0
+
+idx10=where(mid_year_bq EQ 10b or mid_year_bq EQ 2b,cnt10) ; fill or bad points
+
+if cnt10 EQ numofmidyr then begin   ; fill pixels
+flg_metrics=-1
+endif
+
+;oneyear_extensionfillval, mid_year, mid_year_bq, mid_year_bn, mid_stnum,mid_ednum,days_mid
+
+v_interp=mid_year
+v_bq_interp=mid_year_bq
+v_bname_interp=mid_year_bn
+
+return
+
+endelse
 
 end

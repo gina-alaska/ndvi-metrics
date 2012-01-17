@@ -95,21 +95,19 @@ if(nFirstSOS gt 0) THEN  BEGIN   ; have possible sosx <1>
 ;
 ; d. Maximun ND Change Method
 ;
-;      FirstSOSIdx=where(NDVI[fix(Cross.x[firstidx]+2)]-NDVI[fix(Cross.x[firstidx])] eq $
-;                    max(NDVI[fix(Cross.x[firstidx]+2)]-NDVI[fix(Cross.x[firstidx])]))
+      FirstSOSIdx=where(NDVI[fix(Cross.x[firstidx]+2)]-NDVI[fix(Cross.x[firstidx])] eq $
+                    max(NDVI[fix(Cross.x[firstidx]+2)]-NDVI[fix(Cross.x[firstidx])]))
 
      ;--- get slopes of each firstidx by using next 4 points linfit       
-             numtype0=n_elements(firstidx)
-             slopes=fltarr(numtype0)
-             
-             for kk=0,numtype0-1 do begin
-              xx=fix([cross_only.x[firstidx(kk)]+3, cross_only.x[firstidx(kk)]+2, cross_only.x[firstidx(kk)]+1,cross_only.x[firstidx(kk)] ])
-              yy=ndvi(xx)
-              tmp= linfit(xx,yy)
-              slopes(kk)=tmp(1)
-             endfor 
-             
-           firstsosidx = where(slopes EQ max(slopes) )    
+     ;        numtype0=n_elements(firstidx)
+     ;        slopes=fltarr(numtype0)
+     ;        for kk=0,numtype0-1 do begin
+     ;         xx=fix([cross_only.x[firstidx(kk)]+3, cross_only.x[firstidx(kk)]+2, cross_only.x[firstidx(kk)]+1,cross_only.x[firstidx(kk)] ])
+     ;         yy=ndvi(xx)
+     ;         tmp= linfit(xx,yy)
+     ;         slopes(kk)=tmp(1)
+     ;        endfor 
+     ;      firstsosidx = where(slopes EQ max(slopes) )    
              
                 
 ;---- check FirstSOSidx(0), if it is snow(4b), compare it with 20% point,
@@ -118,75 +116,36 @@ if(nFirstSOS gt 0) THEN  BEGIN   ; have possible sosx <1>
          possiby = cross_only.Y[ FirstSOSIdx[n_elements(FirstSOSidx)-1 ] ]
          
          
- ;---- if there are more than one 20% points, choose one which is the most close to the maximun slop point
-
-idx20=where(cross.t EQ 1,cnt1)
-
-if cnt1 LE 0 then begin  ; if no 20% point, set sosx as possiblx
-
-sosx=possibx
-sosy=possiby
-
-endif else begin  ; compare possibx with 20% point,<2>
-
-;--when there are more than one 20% points, choose one which is the most close to the maximun slop point
-slopex=( cross.x(where(cross.t EQ 2) ) )(0)
-gapmin = min(  abs(cross.x(idx20)-slopex)  )
-x20=cross.x(  (where( abs(cross.x - slopex) EQ  gapmin ) )(0)  )
-y20=cross.y(  (where( abs(cross.x - slopex) EQ  gapmin ) )(0)  )
-
-;--when more than one 20% points, choose the first one
-;x20=cross.x(idx20)
-;y20=cross.y(idx20)
-
-
-             
-      ;---- between 20% and possiblex
-      ;
-     
-;---- if possibx LT x20, use x20 as possible sos
-;        
-;       if possibx LT x20 then begin  ;  make sure possiblx equal or greater than x20
-;       
-;       possibx=x20
-;       possiby=y20
-;       endif else begin
-;        print, 'possibx Greater than x20'
-;       endelse 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+;----- check [possibx to maxvalue] to get a closest no-snow point 
         
          ;if ( bq( fix(possibx) ) NE 4b ) and ( bq( fix(possibx)+1 ) NE 4b ) then begin ;possibx is not snow point, found sosx
          
          v=possibx mod fix(possibx)
          
-         if ( v EQ 0 and bq( fix(possibx) ) NE 4b ) or ( v NE 0 and bq( fix(possibx)+1 ) NE 4b ) then begin
+         if ( v EQ 0 and bq( fix(possibx) ) NE 4b ) or ( v NE 0 and bq( fix(possibx)+1 ) NE 4b ) then begin ; <4>
          sosx=possibx
          sosy=possiby
 
          endif else begin ;possibx is snow, found true sosx between possibx+1 to mxidxst <4>
          
-         x20g = where( bq( fix(possibx)+1 : n_elements(bq)-1  ) NE 4b, possibcnt )
+            x20g = where( bq( fix(possibx)+1 : n_elements(bq)-1  ) NE 4b, possibcnt )
          
-         if possibcnt GT 0 then begin 
+            if possibcnt GT 0 then begin 
          
-         sosx= fix(possibx)+1+x20g(0)
-         sosy=ndvi(sosx)
+               sosx= fix(possibx)+1+x20g(0)
+               sosy=ndvi(sosx)
          
-         endif else begin 
+            endif else begin 
          
-         sosx=0
-         sosy=0
+               sosx=0
+               sosy=0
          
-         endelse
+            endelse
           
          
          endelse  ; endof <4>   
       
-  endelse  ; endof <2>        
-     
           FirstSOST=sosx
-          
           FirstSOSN=sosy
 
 

@@ -4,6 +4,9 @@ FUNCTION GetCrossOver_percentage_extremeslope_ver15, Xref, Yref, XData, YData, b
 ;which are not good type points
 ;jzhu, get 20% of maximun points and maximun or minimun slope points, 
 ;output points,xvalue,yvalue,slope,type(0-crossover,1-20%,2-extrmeslope)
+
+;jzhu,12/10/2011, Saturday, found orginal crossover algorithm sometime can not catch the crossover point,
+;use a another simple way to do this job.  
     
    mxidx = where( Yref EQ max(Yref) ) 
    mxidxst=mxidx(0)
@@ -22,7 +25,8 @@ FUNCTION GetCrossOver_percentage_extremeslope_ver15, Xref, Yref, XData, YData, b
    nSize = Size(XRef)
    nDim=nSize[0]
    oSize=nSize
-   oSize[nDim]=nSize[nDim]/2
+   ;oSize[nDim]=nSize[nDim]/2
+   oSize[nDim]=nsize[nDim]
    XPts=Make_Array(Size=oSize)
    YPts=Make_Array(Size=oSize)
    SPts=Make_Array(Size=oSize)
@@ -46,32 +50,68 @@ FUNCTION GetCrossOver_percentage_extremeslope_ver15, Xref, Yref, XData, YData, b
          
     
          
-         FOR i = 0L, nSize[nDim]-2 DO BEGIN
-
-
- 
-        
+         FOR i = 1L, nSize[nDim]-2 DO BEGIN
+         
+             
             RSlope = float(YRef[i+1]-YRef[i])/(XRef[i+1]-XRef[i])
-            DSlope = float(YData[i+1]-YData[i])/(XData[i+1]-XData[i])
+            DSlope = float(YData[i+1]-YData[i])/(XData[i+1]-XData[i])      
+                       
+         
+           if ( YRef[i] LE YData[i] and YRef[i+1] GE YData[i+1] and DOWN ) or $
+              ( YRef[i] GE YData[i] and Yref[i+1] LE YData[i+1] and UP ) then begin ;<0>
+           
             
-            SlopeDiff=DSlope-RSlope
+             if yRef[i] EQ YData[i] or yRef[i+1] EQ YData[i+1] then begin ;<1>
+               if yref[i] EQ yData[i] and yref[i+1] EQ yData[i+1] then begin ;<2>
+               xstar=i+0.5
+               ystar=yref[i]
+               
+               endif else begin ;<2>
+                if yRef[i] EQ yData[i] then begin ;<3>
+                xstar=i
+                ystar=yref[i]
+                endif else begin ; <3>
+                xstar=i+1
+                ystar=yref[i+1]
+                endelse ;<3>
+               endelse  ;<2>
+              endif else begin  ;<1> yref[i] != ydata[i] and yref[i+1] != ydata[i+1]   
+             ;--- calcualte xstar,ystar using linear function formula  
+             RSlope = float(YRef[i+1]-YRef[i])/(XRef[i+1]-XRef[i])
+             DSlope = float(YData[i+1]-YData[i])/(XData[i+1]-XData[i])
+             SlopeDiff=DSlope-RSlope
+             IF (SlopeDiff EQ 0) THEN SlopeDiff=1.e-6
+             RInt = YRef[i]-RSlope*XRef[i]
+             DInt = YData[i]-DSlope*XData[i]
+             XStar = (RInt-DInt)/SlopeDiff
+             YStar =RSlope*(xstar-XRef[i])+YRef[i]
+             
+             if XStar LT XRef[i] or XStar GT XRef[i+1] then begin
+             
+              if abs(Xstar-Xref[i]) LE abs(XStar-Xref[i+1]) then begin
+               Xstar=XRef[i]
+               Ystar=YRef[i]
+              endif else begin
+               Xstar=XRef[i+1]
+               Ystar=YRef[i+1]
+              endelse
+             endif                  
             
-            IF (SlopeDiff EQ 0) THEN SlopeDiff=1.e-6
-
-            RInt = YRef[i]-RSlope*XRef[i]
-            DInt = YData[i]-DSlope*XData[i]
-            
-
-            XStar = (RInt-DInt)/SlopeDiff
-      
-            BetweenD=Between(XStar, XData[i], XData[i+1])
-            BetweenR=Between(XStar, XRef[i], XRef[i+1])
-            
-            
-            ;----- looking for crossover with 20% of maximun ndvi line
-            
-            if (YRef[i] LE v20 and v20 LE Yref[i+1]) and Rslope GT 0 and Down then begin ; found xstar
+             endelse ; <1>
+             
+            if (Xstar LT mxidxst and DOWN) or (Xstar GT mxidxed and UP) then begin    
+             XPts[iCount]=XStar
+             YPts[iCount]=Ystar
+             sPts[icount]=Rslope
+             tPts[icount]=0
+             CPts[iCount]=1
+             iCount = iCount+1
+            endif
               
+            endif ;<0>
+
+            ;----- looking for crossover with 20% of maximun ndvi line
+            if (YRef[i] LE v20 and v20 LE Yref[i+1]) and Rslope GT 0 and Down then begin ; found xstar
                XStar1=Xref[i]+(v20-Yref[i])/RSlope 
                XPts[iCount]=XStar1
                YPts[iCount]=V20
@@ -93,19 +133,10 @@ FUNCTION GetCrossOver_percentage_extremeslope_ver15, Xref, Yref, XData, YData, b
                iCount = iCount+1
             endif
  
- 
- 
- 
- 
- 
- 
- 
-            ;-----get maximun slope for down and minimun slope for up
-            
-            
+           ;---get maximun slope for down and minimun slope for up
             if RSlope GE 0 and Down and Rslope GT slopemax and xref[i] LT mxidxst then begin
             
-              Slopemax=Rslope   
+             Slopemax=Rslope   
              xslopemax=Xref[i]
              yslopemax=yref[i]
              
@@ -113,62 +144,13 @@ FUNCTION GetCrossOver_percentage_extremeslope_ver15, Xref, Yref, XData, YData, b
             
             if RSlope LT 0 and UP and Rslope LT slopemin and xref[i] GT mxidxed then begin
             
-              Slopemin=Rslope
+             Slopemin=Rslope
              xslopemin=Xref[i]
              yslopemin=Yref[i]
              
             endif
             
-             
-      ;jzhu, 9/14/2011, modify the condition,
-  
-      
-      ;      If(BetweenD AND BetweenR) Then PtSC=1 ELSE PtSC=0
-      
-      
-            
-            if ( (BetweenD AND BetweenR) and (Xstar LT min([mxidxst,0.5*bpy])) and DOWN ) or $
-               ( (BetweenD AND BetweenR) and (Xstar GT max([mxidxed,0.5*bpy])) and UP ) then begin
-                 
-                 PtSC=1
-            endif else begin
-                 PtSC=0
-            endelse     
-                
-            ;-----------for sos crossover----------------------
-            
-              IF PtSC gt 0 AND ((DSlope lt RSlope) and DOWN ) then begin  ; for sos crossover 
-            
-               
-               XPts[iCount]=XStar
-               YPts[iCount]=DSlope*XStar + DInt
-               sPts[icount]=Rslope
-               tPts[icount]=0
-               CPts[iCount]=PtSC
-               iCount = iCount+1
-              
-               
-              endif
-            
-              
-            
-            
-           ;----------for EOS crossover ----------------------------------
-         
-              if PtSC GT 0 AND ((DSlope gt RSlope) and UP ) THEN BEGIN
-            
  
-              
-                XPts[iCount]=XStar
-                YPts[iCount]=DSlope*XStar + DInt
-                sPts[iCount]=Rslope
-                tPts[icount]=0
-                CPts[iCount]=PtSC
-                iCount = iCount+1
-              
-              endif     
-              
-          
          END  ;for
          
          ;------ add maxslope point to down or minslope point to up
@@ -202,7 +184,6 @@ FUNCTION GetCrossOver_percentage_extremeslope_ver15, Xref, Yref, XData, YData, b
            tPts[icount]=2
            
          endif
-         
          
          
          NPts=0 ; initial value

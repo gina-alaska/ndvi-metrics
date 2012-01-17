@@ -2,9 +2,12 @@
 ;This program choose the point where slope of NDVI is smallest.
 ;if eos_possib1 < 20% point, eos_possib2 = eos_possi1, otherwise eos_possb2 = 20%point,find a nearest point from eos_possb2 to 1, which is not snow point, 
 ;this point is EOS
+;jzhu, 12/12/2011, modify from geteos_ver15.pro, uses different stragegy to pick up the final EOS among the crossover. First, find the last 20% point; then
+;find the possibx point which is defined as the crossover point which is the most closest to the 20% point; pick the smaller point between the possibx and 
+;the last 20% point as the possibx1, find the "good" last point between 0 to possibx1 as EOS. 
+;  
 
-
-FUNCTION  GetEOS_ver15, Cross, NDVI, bq, x,bpy,SOS,bma
+FUNCTION  GetEOS_ver16, Cross, NDVI, bq, x,bpy,SOS,bma
 
 FILL=-1.
 
@@ -56,11 +59,56 @@ lastidx=n_elements(NDVI)-1 ; lastidx
                CurX=SOS.SOST[i] $
             ELSE $
                CurX=CurX+bpy
+               
+               
+;---- possibx=0 do not find sos
+;if possibx EQ 0 then begin
+;eosx=0
+;eosy=0
+;goto,lb11
+;endif
+  
+         
+;---- find the last 20% point
+
+idx20=where(cross.t EQ 1, cnt1)
+
+if cnt1 LE 0 then begin  ; <3> if no 20% point, set the eosx and eosy as 0
+x20=0
+y20=0
+eosx = 0
+eosy = 0
+goto,lb11
+
+endif else begin  ; <3>
+
+;---choose the last 20% point
+x20=cross.x( idx20( n_elements(idx20)-1) )
+y20=cross.y( idx20( n_elements(idx20)-1) )
+
+;---choose one with the minimum slope
+;slopex= (cross.x(where(cross.t EQ 2)))(0)
+;gapmin = min( abs(cross.x(idx20)-slopex) )
+;x20=cross.x( ( where( abs(cross.x - slopex) EQ  gapmin ) )(0) )
+;y20=cross.y( ( where( abs(cross.x - slopex) EQ  gapmin ) )(0) )
+
+;---choose one that is the closest to possibx
+;if possibx GT 0 then begin
+;gapmin=min (abs(cross.x(idx20)-possibx) )
+;x20=cross.x(  (where( abs(cross.x - possibx) EQ  gapmin ) )(0)  )
+;y20=cross.y(  (where( abs(cross.x - possibx) EQ  gapmin ) )(0)  )
+;endif else begin
+;slopex= (cross.x(where(cross.t EQ 2)))(0)
+;gapmin = min( abs(cross.x(idx20)-slopex) )
+;x20=cross.x( ( where( abs(cross.x - slopex) EQ  gapmin ) )(0) )
+;y20=cross.y( ( where( abs(cross.x - slopex) EQ  gapmin ) )(0) )
+;endelse
+
+;----find the possibx among the crossover points
+
+;-----only consider crossover points for determine if the crossover is valid
  
- ;-----only consider crossover points for determine if the crossover is valid
- 
- 
-     t0idx = where(cross.t EQ 0,t0cnt) ; t0--crossover type,0--crossover, 1--20% point, 2--extremeslope point
+    t0idx = where(cross.t EQ 0,t0cnt) ; t0--crossover type,0--crossover, 1--20% point, 2--extremeslope point
   
      if t0cnt LT 1 then begin ; <0> no crossover
      
@@ -68,80 +116,46 @@ lastidx=n_elements(NDVI)-1 ; lastidx
      possiby=0
      endif else begin   ;<0>
       
-      
-      cross_only={X:cross.x(t0idx), Y:cross.y(t0idx), S:cross.s(t0idx),T:cross.t(t0idx),C:cross.c(t0idx), N:t0cnt}
-      
+            cross_only={X:cross.x(t0idx), Y:cross.y(t0idx), S:cross.s(t0idx),T:cross.t(t0idx),C:cross.c(t0idx), N:t0cnt}
             NextIdx=where(Cross_only.X GT CurX+WinMin*bpy AND $
                           Cross_only.X LT CurX+WinMax*bpy AND $
                           Cross_only.X LT nNDVI-2, nNext)
-;                          
-;            NextIdx=where(Cross.X GT CurX AND $
-;                          Cross.X LT CurX+WinMax*bpy AND $
-;                          Cross.X LT nNDVI-2, nNext)
-     if NextIdx[0] EQ -1 then begin
-     
-        Nextidx=0
-        nNExt=0
-        
-     endif
+           if NextIdx[0] EQ -1 then begin
+             Nextidx=0
+             nNExt=0
+           endif
             
 
-IF (nNext gt 0) THEN BEGIN  ;<1> have possiblex,<1>
+    IF (nNext gt 0) THEN BEGIN  ;<1> have possiblex,<1>
 
- 
-   
-    
-;               possi_NextEOSIdx=where(NDVI[fix(Cross.x[NextIdx])] eq $
-;                            min(NDVI[fix(Cross.x[NextIdx])]))
+;pick the one which has the minimun slope -------------
 
-;
-; minimun ndvi method, this method is used in geteod2.pro
+;               slope=fltarr(nNEXT)
+;               slope[NextIdx]= NDVI[fix(Cross_only.x[NextIdx])]-NDVI[fix(Cross_only.x[NextIdx])-1]
+;               NextEOSIdx=where(slope EQ min(slope[NextIdx]) )
 
-;               psble1_NextEOSIdx=where(Cross.y[NextIdx] eq $
-;                            min(Cross.y[NextIdx]))
-
-
- 
-;GetEOS3.pro method, slope method, jzhu, 8/10/2011-------------------
-               
-;minimun slope method -------------
-
-               slope=fltarr(nNEXT)
-               slope[NextIdx]= NDVI[fix(Cross_only.x[NextIdx])]-NDVI[fix(Cross_only.x[NextIdx])-1]
-               NextEOSIdx=where(slope EQ min(slope[NextIdx]) )
-
-;slope difference method
+;pick the one which has the minimum slope difference method
          
 ;      NextEOSIdx=where(NSlope[fix(Cross_only.x[Nextidx])]-bSlope[fix(Cross_only.x[Nextidx])] eq $
 ;                    min(NSlope[fix(Cross_only.x[Nextidx])]-bSlope[fix(Cross_only.x[Nextidx])]))
 
-;
-; Max ND Change Method, if you want this method, you need modify the following segement program
-;
-;      FirstSOSIdx=where(NDVI[fix(Cross.x[firstidx]+1)]-NDVI[fix(Cross.x[firstidx])] eq $
-;                    max(NDVI[fix(Cross.x[firstidx]+1)]-NDVI[fix(Cross.x[firstidx])]))
-
-
-;--- get slopes of each NEXTidx by using prevoius 4 points linfit      
+;get slopes of each NEXTidx by using prevoius 4 points linfit, then pick the minimum slope point      
  
 ;             numtype0=n_elements(Nextidx)
 ;             slopes=fltarr(numtype0)
-             
 ;             for kk=0,numtype0-1 do begin
-;              xx=fix([cross_only.x[Nextidx(kk)]-3, cross_only.x[Nextidx(kk)]-2, cross_only.x[Nextidx(kk)]-1,cross_only.x[Nextidx(kk)] ])
-;              yy=ndvi(xx)
-;              tmp= linfit(xx,yy)
-;              slopes(kk)=tmp(1)
+;               xx=fix([cross_only.x[Nextidx(kk)]-3, cross_only.x[Nextidx(kk)]-2, cross_only.x[Nextidx(kk)]-1,cross_only.x[Nextidx(kk)] ])
+;               yy=ndvi(xx)
+;               tmp= linfit(xx,yy)
+;               slopes(kk)=tmp(1)
 ;             endfor 
 ;             NextEOSidx = where(slopes EQ min(slopes) )    
              
+;pick the crossover point which is the most close to the x20
 
+              NextEOSIdx=where( abs(cross_only.x(NextIdx)-x20)  EQ min( abs(cross_only.x(NextIdx)-x20) ) )
 
-
-;---- check FirstSOSidx(0), if it is snow(4b), compare it with 20% point,
-
-
-
+;-----------------------------------------------------------
 
          possibx = cross_only.X[ NextEOSIdx[0] ]
          possiby = cross_only.Y[ NextEOSIdx[0] ]
@@ -154,49 +168,11 @@ possiby=0
 endelse  ;<1>
 
 endelse ;<0>
-  
-;---- possibx=0 do not find sos
-if possibx EQ 0 then begin
-eosx=0
-eosy=0
-goto,lb11
-endif
-  
-         
- ;---- if there are more than one 20% points, choose one which is the most close to the maximun slop point
 
-idx20=where(cross.t EQ 1, cnt1)
+;------------------------------------------------
 
-if cnt1 LE 0 then begin  ; <3>
-
-eosx = possibx
-eosy = possiby
-
-endif else begin  ; compare possibx to 20% pointm, <3>
- 
-;---when more than one 20% points, choose one with the minimum slope
-;slopex= (cross.x(where(cross.t EQ 2)))(0)
-;gapmin = min( abs(cross.x(idx20)-slopex) )
-;x20=cross.x( ( where( abs(cross.x - slopex) EQ  gapmin ) )(0) )
-;y20=cross.y( ( where( abs(cross.x - slopex) EQ  gapmin ) )(0) )
-
-;---when more than one 20% points, choose one that is the closest to possibx
-if possibx GT 0 then begin
-gapmin=min (abs(cross.x(idx20)-possibx) )
-x20=cross.x(  (where( abs(cross.x - possibx) EQ  gapmin ) )(0)  )
-y20=cross.y(  (where( abs(cross.x - possibx) EQ  gapmin ) )(0)  )
-endif else begin
-slopex= (cross.x(where(cross.t EQ 2)))(0)
-gapmin = min( abs(cross.x(idx20)-slopex) )
-x20=cross.x( ( where( abs(cross.x - slopex) EQ  gapmin ) )(0) )
-y20=cross.y( ( where( abs(cross.x - slopex) EQ  gapmin ) )(0) )
-endelse
-
-;--when more than one 20%, choose the last one
-;x20=cross.x( idx20(n_elements(idx20)-1) )
-;y20=cross.y( idx20(n_elements(idx20)-1) )
-
-        
+;-----compare x20 and possibx, pick the smaller one
+       
         if possibx GT 0 then begin
          
          if possibx GT x20 then begin  ;  make sure eos is equal or less than 20% point

@@ -13,7 +13,7 @@ pro smooth_calculate_metrics_tile_ver9,filen,flg
 
 ;test, @@@@
 
-filen='/raid/scratch/cesu/eMODIS/ver_new_201110/2008/ver13/full_scene/2008_oneyear_layer_subset_good'
+;filen='/raid/scratch/cesu/eMODIS/ver_new_201110/2008/ver13/full_scene/2008_oneyear_layer_subset_good'
 
 ;filen='/mnt/jzhu_scratch/nps-cesu/wrk/ver_new_201110/2008/ver13/full_scene/2008_oneyear_layer_subset_good'
 
@@ -27,7 +27,14 @@ filen='/raid/scratch/cesu/eMODIS/ver_new_201110/2008/ver13/full_scene/2008_oneye
 
 ;test only, input parameters
 ;filen = '/home/jiang/nps/cesu/modis_ndvi_250m/wrkdir/2010_multiyear_layer_stack_0_200_set_snow_cloud_n4000'
+
 ;filen='C:\nps\2010_multiyear_layer_stack_0_200_set_snow_cloud_n4000'
+
+;filen='C:\Users\jiang\Documents\work\nps-prog\ndvi_products\nps_metrics\2008_oneyear_layer_subset_good'
+
+;filen='/mnt/jzhu_scratch/nps-cesu/wrk/ver_new_201110/2008/ver13/full_scene/2008_oneyear_layer_subset_good'
+
+filen='/mnt/raid/scratch/cesu/eMODIS/ver_new_201110/2008/ver13/full_scene/2008_oneyear_layer_subset_good'
 
 ;---make sure the program can work in both windows and linux.
 
@@ -73,7 +80,7 @@ flg=0;  0----successs, 1--- not sucess
 
 ;---open the input file
 
-envi_open_file,filen,r_fid=rt_fid
+envi_open_file,filen,/NO_REALIZE,r_fid=rt_fid
 
 
 if rt_fid EQ -1 then begin
@@ -142,7 +149,7 @@ tmp=transpose(data(j,*) ) ; band vector
 bname=bnames(0:num_band/2-1)
 
 
-if i EQ 4090  and j EQ 5388 then begin
+if i EQ  0  and j EQ 8738 then begin
 
 print, 'test'
 

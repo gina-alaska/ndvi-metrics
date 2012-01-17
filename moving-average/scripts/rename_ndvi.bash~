@@ -1,0 +1,49 @@
+#!/bin/bash
+
+#rename file name
+
+dir_wrk=/home/jiang/nps/cesu/modis_ndvi_250m/wrkdir
+
+cd $dir_wrk
+
+ls  MT3RG_2010_??-??_250m_composite_ndvi.tif >tmplist
+
+#sed -n '/MT3RG_2010_..-.._250m_composite_ndvi.tif/p' $dir_wrk/flist >tmp
+
+for i in $(ls MT3RG_2010_??-??_250m_composite_ndvi.tif ) ;do
+
+yyyy=`expr $i : '......\(....\)'`
+doy1=`expr $i : '...........\(..\)'`
+doy2=`expr $i : '..............\(..\)'`
+
+echo $yyyy
+echo $doy1
+echo $doy2
+
+mv $i MT3RG_${yyyy}_0${doy1}-0${doy2}_250m_composite_ndvi.tif
+
+done 
+
+# rename ??-??? files
+
+ls  MT3RG_2010_??-???_250m_composite_ndvi.tif >tmplist
+
+#sed -n '/MT3RG_2010_..-.._250m_composite_ndvi.tif/p' $dir_wrk/flist >tmp
+
+for i in $(ls MT3RG_2010_??-???_250m_composite_ndvi.tif ) ;do
+
+yyyy=`expr $i : '......\(....\)'`
+doy1=`expr $i : '...........\(..\)'`
+doy2=`expr $i : '..............\(...\)'`
+
+echo $yyyy
+echo $doy1
+echo $doy2
+
+mv $i MT3RG_${yyyy}_0${doy1}-${doy2}_250m_composite_ndvi.tif
+
+done
+
+
+
+exit

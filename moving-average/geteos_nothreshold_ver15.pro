@@ -115,71 +115,31 @@ IF (nNext gt 0) THEN BEGIN  ;have possiblex,<1>
 ;                    min(NSlope[fix(Cross_only.x[Nextidx])]-bSlope[fix(Cross_only.x[Nextidx])]))
 
 ;
-; Max ND Change Method, if you want this method, you need modify the following segement program
+; Max ND Change Method
 ;
-;      FirstSOSIdx=where(NDVI[fix(Cross.x[firstidx]+1)]-NDVI[fix(Cross.x[firstidx])] eq $
-;                    max(NDVI[fix(Cross.x[firstidx]+1)]-NDVI[fix(Cross.x[firstidx])]))
+      NextEOSIdx=where(NDVI[fix(Cross.x[Nextidx])]-NDVI[fix(Cross.x[Nextidx]-1)] eq $
+                    min(NDVI[fix(Cross.x[Nextidx])]-NDVI[fix(Cross.x[Nextidx]-1)]))
 
 
 ;--- get slopes of each NEXTidx by using prevoius 4 points linfit      
- 
-             numtype0=n_elements(Nextidx)
-             slopes=fltarr(numtype0)
-             
-             for kk=0,numtype0-1 do begin
-              xx=fix([cross_only.x[Nextidx(kk)]-3, cross_only.x[Nextidx(kk)]-2, cross_only.x[Nextidx(kk)]-1,cross_only.x[Nextidx(kk)] ])
-              yy=ndvi(xx)
-              tmp= linfit(xx,yy)
-              slopes(kk)=tmp(1)
-             endfor 
-             
-           NextEOSidx = where(slopes EQ min(slopes) )    
+;              numtype0=n_elements(Nextidx)
+;              slopes=fltarr(numtype0)
+;              for kk=0,numtype0-1 do begin
+;              xx=fix([cross_only.x[Nextidx(kk)]-3, cross_only.x[Nextidx(kk)]-2, cross_only.x[Nextidx(kk)]-1,cross_only.x[Nextidx(kk)] ])
+;              yy=ndvi(xx)
+;              tmp= linfit(xx,yy)
+;              slopes(kk)=tmp(1)
+;              endfor 
+;             NextEOSidx = where(slopes EQ min(slopes) )    
              
 
 
-
-;---- check FirstSOSidx(0), if it is snow(4b), compare it with 20% point,
-
-
-
-
-         possibx = cross_only.X[ NextEOSIdx[0] ]
-         possiby = cross_only.Y[ NextEOSIdx[0] ]
+         possibx = cross_only.X[ NextEOSIdx[n_elements(NextEOSIdx)-1] ]
+         possiby = cross_only.Y[ NextEOSIdx[n_elements(NextEOSIdx)-1] ]
          
          
- ;---- if there are more than one 20% points, choose one which is the most close to the maximun slop point
 
-idx20=where(cross.t EQ 1, cnt1)
-
-if cnt1 LE 0 then begin  ; <3>
-
-eosx = possibx
-eosy = possiby
-
-
-endif else begin  ; compare possibx to 20% pointm, <3>
- 
-;---when more than one 20% points, choose one with the minimum slope
-slopex= (cross.x(where(cross.t EQ 2)))(0)
-gapmin = min( abs(cross.x(idx20)-slopex) )
-x20=cross.x(  (where( abs(cross.x - slopex) EQ  gapmin ) )(0)  )
-y20=cross.y(  (where( abs(cross.x - slopex) EQ  gapmin ) )(0)  )
-
-;--when more than one 20%, choose the last one
-;x20=cross.x( idx20(n_elements(idx20)-1) )
-;y20=cross.y( idx20(n_elements(idx20)-1) )
-
-;-----EOS: possibx > x20, use x20 as possible eos
-
-;      if possibx GT x20 then begin  ;  make sure eos is equal or less than 20% point
-;        possibx=x20
-;        possiby=y20
-;        endif else begin
-;        print,'possibx Less than x20'
-;        endelse
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;        
-        
-         ;check [mxidxed:possibx]
+         ;check [mxidxed:possibx] to get the point which is closest to possibx and less than possiblx
          
         ; if bq( fix(possibx) ) NE 4b and bq (fix(possibx)+1 ) NE 4b then begin  ; found sosx=possibx, <4>
          
@@ -192,25 +152,21 @@ y20=cross.y(  (where( abs(cross.x - slopex) EQ  gapmin ) )(0)  )
          
          x20g = where( bq( 0:fix(possibx) ) NE 4b, possibcnt )
          
-         if possibcnt GT 0 then begin
+           if possibcnt GT 0 then begin
          
-         eosx = x20g( n_elements(x20g)-1 )
+            eosx = x20g( n_elements(x20g)-1 )
           
-         eosy=ndvi(eosx)
+            eosy=ndvi(eosx)
          
-         endif else begin
+           endif else begin
          
-         eosx=0
-         eosy=0
+            eosx=0
+            eosy=0
          
-         endelse
+           endelse
          
          endelse  ;endof <4>     
-      
-endelse   ; end of compare possibx to 20% point, <3>
-              
-
-      
+          
                EOST[i]=eosx
                EOSN[i]=eosy
       

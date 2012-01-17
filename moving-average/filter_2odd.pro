@@ -19,7 +19,7 @@ return
 
 endif
 
-r = rin  ;  r will be used to store result vector
+r = rin-100  ;  r will be used to store result vector
 
 
 num=(size(r))(1) ; number of points in the vector r
@@ -48,6 +48,8 @@ endelse
 
 
 endfor
+
+r=r+100
 
 return
 

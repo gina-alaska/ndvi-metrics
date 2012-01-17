@@ -6,7 +6,7 @@ Function Between,xstar,x0,x1
 
 flg=0 ; return value
 
-if xstar GE x0 and xstar LE x1 then begin
+if xstar GE x0-0.01 and xstar LE x1+0.01 then begin
 
 flg=1 
 

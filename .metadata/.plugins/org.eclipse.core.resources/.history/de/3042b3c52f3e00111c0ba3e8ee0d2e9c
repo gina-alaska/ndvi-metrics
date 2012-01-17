@@ -5,7 +5,7 @@
  
 
 pro interpol_noextension_1y_vector_ver10, mid_year_cb, mid_year_bn,threshold,snowcld,v_interp,v_bq_interp, v_bname_interp,ratio, mid_stnum,mid_ednum,flg_metrics
-             
+
 ;input: mid_year--- input vector, return data stored in v_interp, threshold--- get rid of those points with value below threshold, then interpol
 ;       mid_year_bn----band names of elements of vector
 ;output: v_interp---- result vector, v_bname_interp --- result of band names
